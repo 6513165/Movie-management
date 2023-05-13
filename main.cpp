@@ -9,7 +9,7 @@ using namespace std;
 
 int receive_input_int(int,int,int);
 char receive_input_char();
-void show_pop(),show_list(),center_text(string),select_seat(theater*),display_seat(seat*,theater*),avaliable_seat(theater*),show_promotion();
+void show_pop(),show_list(),center_text(string),select_seat(theater*),display_seat(seat*,theater*),avaliable_seat(theater*),show_promotion(),discount();
 void cancel_reservation(seat*),payment(seat*,theater*),reservation(seat*),random_fill_seat(theater*,int);
 theater* select_movie(theater*,int);
 
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
     for(int i=argc-3;i>0;i-=3) {
         t=new theater(argv[i],atof(argv[i+1]),atoi(argv[i+2]));
         A.add_node(t);
-        //create LLs seat in theater
+        //create LL seat in theater
         for(int j=60;j>0;j--){
             if(j<=40)
                 s=new seat(j);
@@ -49,7 +49,9 @@ int main(int argc, char *argv[]){
         cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;   
         center_text("|| Movie List ||");      
         cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;   
-        A.show_all();   
+       center_text("Movie name          Show time          Theater");
+        cout<<endl;
+         A.show_all();   
         show_list();                                                                    
         switch(receive_input_int(1,3,1)){
             case 1:
@@ -70,7 +72,7 @@ int main(int argc, char *argv[]){
 
 //show text in center
 void center_text(string a){
-    cout<<setw((115/2)+(a.size()/2))<<a<<endl;
+    cout<<setw((112/2)+(a.size()/2))<<a<<endl;
 }
 
 //show POP THEATER
@@ -91,8 +93,7 @@ void show_list(){
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;   
     center_text("1. Buy ticket");
     center_text("2. Avaliable seat");
-    center_text("3. Promotion");
-    center_text("4. exit");
+    center_text("3. exit");
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
 }
 
@@ -136,6 +137,7 @@ int receive_input_int(int con1,int con2,int con3){
 				throw cin_fail;
 			if(x>con2 || x<con1)
 				throw outof_range;
+               
 		}
 		catch(exception& e){
 			cout<<e.what()<<endl;
@@ -161,7 +163,7 @@ theater* select_movie(theater* a ,int b){
 
 //select seat and reserved it
 void select_seat(theater* t){
-    flag1:
+
     int z=0,seat_number=0;
     char x;
     seat* s;
@@ -175,9 +177,10 @@ void select_seat(theater* t){
     center_text("2. back ");
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
     if(receive_input_int(1,2,1)==1){
-        flag2:
+        flag1:
         s=t->get_head_seat();
         x=receive_input_char();
+        
         switch(x){
             case 'A':
                 z=receive_input_int(1,10,0);
@@ -222,9 +225,7 @@ void select_seat(theater* t){
                 }
                 else{
                     cout<<"This seat is reserved"<<endl;
-                    system("PAUSE");
-                    system("CLS");
-                    goto flag1;
+                     break;
                 }
                 break;
             }
@@ -243,7 +244,7 @@ void select_seat(theater* t){
         cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
         switch(receive_input_int(1,3,1)){
             case 1:
-                goto flag2;
+                goto flag1;
                 break;
             case 2:
                 payment(t->get_head_seat(),t);
@@ -337,9 +338,7 @@ void display_seat(seat* s,theater* t){
 
 //show avaliable seat in that theater
 void avaliable_seat(theater* t){
-    seat* s;
-    s=t->get_head_seat();
-    display_seat(s,t);
+    display_seat(t->get_head_seat(),t);
     system("PAUSE");
 }
 
@@ -365,8 +364,9 @@ void reservation(seat* s){
 
 //user payment
 void payment(seat* s,theater* t){
+    int settingdc=0;
     int result=0,seat=0,delux=0,sofa=0;
-    int price_seat=0,price_delux=0,price_sofa=0;
+    int price_seat=0,price_delux=0,price_sofa=0,totalprice;
     system("CLS");
     show_pop();
     display_seat(t->get_head_seat(),t);
@@ -392,42 +392,90 @@ void payment(seat* s,theater* t){
         }
         s=s->move_next();
     }
+
+    string ans,dc;
+    cout<<"Do you have a discount code? (yes/no) : ";
+    do{
+    cin>>ans;
+    if(ans=="YES" || ans=="Yes"|| ans=="YEs"|| ans=="YeS"|| ans=="yes"|| ans=="yES"|| ans=="yEs"|| ans=="yeS"){
+    cout<<"Input your discount code : ";
+    cin>>dc;
+    if(dc=="POP6513111"||dc=="POP6513135"||dc=="POP6513165"||dc=="POP6513169"||dc=="POP6513178"){
+         cout<<"You got 100 discount"<<endl;
+         settingdc=1;
+    }
+    else
+        cout<<"Wrong Code"<<endl;
+    }
+
+    }while(ans!="YES" && ans!="Yes"&& ans!="YEs"&& ans!="YeS"&& ans!="yes"&& ans!="yES"&& ans!="yEs"&& ans!="yeS"&& ans!="NO" && ans!="no"&& ans!="No"&& ans!="nO");
+
     string var;
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
     center_text("Payment");
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
-    center_text("Seat type                     Amount    Price");
+    center_text("                              Amount    Price");
     cout<<endl;
-    if(seat != 0){
+    if(settingdc==0)
+    {
+        if(seat != 0){
         var = "Normal Seat                       "+to_string(seat)+"      "+to_string(price_seat);
         center_text(var);
     }
-    if(delux != 0){
+         if(delux != 0){
         var = "Delux Seat                        "+to_string(delux)+"      "+to_string(price_delux);
         center_text(var);
     }
-    if(sofa != 0){
+        if(sofa != 0){
         var = "Sofa Seat                         "+to_string(sofa)+"      "+to_string(price_sofa);
         center_text(var);
     }
     cout<<endl;
+    totalprice=price_seat+price_delux+price_sofa;
     var = "Total                             "+to_string(seat+delux+sofa)+"      "+to_string(price_seat+price_delux+price_sofa);
     center_text(var);
+
+    }
+   else if (settingdc==1)
+    { 
+        if(seat != 0){
+        var = "Normal Seat                       "+to_string(seat)+"      "+to_string(price_seat);
+        center_text(var);
+    }
+         if(delux != 0){
+        var = "Delux Seat                        "+to_string(delux)+"      "+to_string(price_delux);
+        center_text(var);
+    }
+         if(sofa != 0){
+        var = "Sofa Seat                         "+to_string(sofa)+"      "+to_string(price_sofa);
+         center_text(var);
+    }
+    cout<<endl;
+    totalprice=price_seat+price_delux+price_sofa-100;
+    var = "Total                             "+to_string(seat+delux+sofa)+"      "+to_string(price_seat+price_delux+price_sofa); 
+    center_text(var);cout<<endl;
+    
+    var = "Discount                                 100";  
+    center_text(var);cout<<endl;
+    var = "Total                             "+to_string(seat+delux+sofa)+"      "+to_string(totalprice);
+     center_text(var); cout<<endl;
+    }
+
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
     int money=0;
     do{
         cout<<"Enter amount of money : ";
         money = receive_input_int(0,50000,0);
-    }while(money<price_seat+price_delux+price_sofa && money!=0);
+    }while(money<totalprice && money!=0);
     cout<<"----------------------------------------------------------------------------------------------------------------"<<endl; 
-    if(money == 0){
+    if(money <= 0){
         cancel_reservation(t->get_head_seat());
     }
-    else if(money == price_seat+price_delux+price_sofa){
+    else if(money == totalprice){
         center_text("Thank You");
     }
     else{
-        var = "Change "+to_string(money-(price_seat+price_delux+price_sofa));
+        var = "Change "+to_string(money-( totalprice));
         center_text(var);
         center_text("Thank You");
     }
@@ -438,6 +486,10 @@ void payment(seat* s,theater* t){
 
 
 void show_promotion(){
+}
+
+void discount(){
+
 }
 
 //random fill seat for all theater
