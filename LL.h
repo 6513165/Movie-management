@@ -7,7 +7,7 @@ public:
        void add_node(theater*&);
        void show_all();
        theater* get_head();
-       int check_monster();
+       //int check_monster();
        int get_size();
        LL();
        ~LL();

@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
         cout<<"----------------------------------------------------------------------------------------------------------------"<<endl;   
         A.show_all();   
         show_list();                                                                    
-        switch(receive_input_int(1,4,1)){
+        switch(receive_input_int(1,3,1)){
             case 1:
                 select_seat(select_movie(A.get_head(),A.get_size()));
                 break;
@@ -59,9 +59,6 @@ int main(int argc, char *argv[]){
                 avaliable_seat(select_movie(A.get_head(),A.get_size()));
                 break;
             case 3:
-                show_promotion();
-                break;
-            case 4:
                 flag=0;
                 break;
             default:
